@@ -8,6 +8,8 @@ plugins {
 	kotlin("jvm") version "1.7.21"
 	kotlin("plugin.spring") version "1.7.21"
 	kotlin("plugin.jpa") version "1.7.21"
+
+	idea
 }
 
 group = "info.ognibeni.club.score"
@@ -23,6 +25,20 @@ configurations {
 repositories {
 	mavenCentral()
 }
+
+// See https://docs.gradle.org/current/userguide/java_testing.html#sec:configuring_java_integration_tests
+sourceSets {
+	create("it") {
+		compileClasspath += sourceSets.main.get().output
+		runtimeClasspath += sourceSets.main.get().output
+	}
+}
+
+val itImplementation: Configuration by configurations.getting {
+	extendsFrom(configurations.implementation.get())
+}
+
+configurations["itRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 extra["testcontainersVersion"] = "1.17.6"
 
@@ -50,11 +66,13 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.flywaydb:flyway-core")
 
-	// Testing
+	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:postgresql")
+	// Integration testing
+	itImplementation("org.springframework.boot:spring-boot-starter-test")
+	itImplementation("org.testcontainers:junit-jupiter")
+	itImplementation("org.testcontainers:postgresql")
 }
 
 tasks.withType<KotlinCompile> {
@@ -68,7 +86,34 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
+val integrationTest = task<Test>("integrationTest") {
+	description = "Runs integration tests."
+	group = "verification"
+
+	// set the configuration profile for the integration tests, enabling application-integrationTest.yml
+	systemProperty("spring.profiles.active", "integrationTest")
+
+	testClassesDirs = sourceSets["it"].output.classesDirs
+	classpath = sourceSets["it"].runtimeClasspath
+
+	testLogging {
+		events("passed")
+	}
+
+	shouldRunAfter("test")
+}
+
+tasks.check {
+	dependsOn(integrationTest)
+}
+
 // build information to be shown in actuator's info endpoint
 springBoot {
 	buildInfo()
+}
+
+idea {
+	module {
+		testSources.from(sourceSets["it"].kotlin.srcDirs)
+	}
 }

@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    # url is configured in `TestContainerConfiguration`
+    username: admin
+    password: pass
+  flyway:
+    locations: classpath:/db/migration/structure,classpath:/db/migration/sample
