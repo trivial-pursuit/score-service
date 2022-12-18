@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  db-score:
+    image: postgres:15
+    container_name: db-score
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data-score:/var/lib/postgresql/data-score
+    environment:
+      - POSTGRES_DB=score
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+    networks:
+      - club-network
+
+volumes:
+  db-data-score:
+    driver: local
+
+networks:
+  club-network:
+    name: club-net

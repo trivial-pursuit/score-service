@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/score
+    username: admin
+    password: pass
+  flyway:
+    locations: classpath:/db/migration/structure,classpath:/db/migration/sample
