@@ -3,6 +3,7 @@ package info.ognibeni.club.score.it
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.containers.wait.strategy.Wait
 
 /**
  * Interface that should be used for all integration tests needing a test container.
@@ -30,6 +31,7 @@ interface TestContainerConfiguration {
 			withDatabaseName("score-test")
 			withUsername("admin")
 			withPassword("pass")
+			waitingFor(Wait.forListeningPort())
 			start()
 		}
 
