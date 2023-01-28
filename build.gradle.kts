@@ -1,13 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.0.0"
+	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
+	id("org.graalvm.buildtools.native") version "0.9.18"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
 
-	kotlin("jvm") version "1.7.21"
-	kotlin("plugin.spring") version "1.7.21"
-	kotlin("plugin.jpa") version "1.7.21"
+	kotlin("jvm") version "1.7.22"
+	kotlin("plugin.spring") version "1.7.22"
+	kotlin("plugin.jpa") version "1.7.22"
 
 	idea
 }
@@ -40,11 +41,9 @@ val itImplementation: Configuration by configurations.getting {
 
 configurations["itRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
-extra["testcontainersVersion"] = "1.17.6"
-
 dependencyManagement {
 	imports {
-		mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
+		mavenBom("org.testcontainers:testcontainers-bom:1.17.6")
 	}
 }
 
