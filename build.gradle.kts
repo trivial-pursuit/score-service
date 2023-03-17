@@ -68,6 +68,9 @@ dependencies {
 
 	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.junit.jupiter:junit-jupiter-api")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+	testImplementation("io.mockk:mockk:1.13.4")
 
 	// Integration testing
 	itImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -84,6 +87,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	testLogging { events("passed") }
 }
 
 val integrationTest = task<Test>("integrationTest") {
@@ -95,10 +99,6 @@ val integrationTest = task<Test>("integrationTest") {
 
 	testClassesDirs = sourceSets["it"].output.classesDirs
 	classpath = sourceSets["it"].runtimeClasspath
-
-	testLogging {
-		events("passed")
-	}
 
 	shouldRunAfter("test")
 }
