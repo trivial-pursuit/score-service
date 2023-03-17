@@ -71,6 +71,7 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 	testImplementation("io.mockk:mockk:1.13.4")
+	testImplementation("com.ninja-squad:springmockk:4.0.2")
 
 	// Integration testing
 	itImplementation("org.springframework.boot:spring-boot-starter-test")
