@@ -1,6 +1,9 @@
 package info.ognibeni.club.score.usecase.concert
 
 import info.ognibeni.club.score.usecase.concert.domain.Concert
+import info.ognibeni.club.score.usecase.concert.domain.ConcertScore
+import info.ognibeni.club.score.usecase.score.Fixtures.exampleScore
+import info.ognibeni.club.score.usecase.score.domain.Score
 import java.time.LocalDate
 
 object Fixtures {
@@ -11,4 +14,9 @@ object Fixtures {
 					date = EXAMPLE_LOCAL_DATE,
 					location = "Example Location",
 					scores = emptySet())
+
+	fun exampleConcertScore(concert: Concert = exampleConcert(),
+	                        score: Score = exampleScore(),
+	                        sequenceNumber: Int = 1): ConcertScore =
+		ConcertScore(concert, score, sequenceNumber, sequenceNumber.toLong())
 }
