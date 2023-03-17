@@ -58,7 +58,7 @@ SELECT SETVAL('scores_id_seq', (SELECT COUNT(1) FROM scores));
 -- CONCERTS
 INSERT INTO concerts (id, name, date, location)
 VALUES (1, 'Herbstkonzert', '2020-10-10', 'WeststadtZentrum Aalen'),
-       (2, 'Kirchenkonzert', '2020-04-10', 'Slavatorkirche Aalen'),
+       (2, 'Kirchenkonzert', '2020-04-10', 'Salvatorkirche Aalen'),
        (3, 'Gemeinschaftskonzert', '2022-10-10', 'Turn- und Festhalle Dorfmerkingen');
 
 -- set ID counter to the amount of already inserted rows
@@ -100,12 +100,12 @@ SELECT SETVAL('score_part_id_seq', (SELECT COUNT(1) FROM score_part));
 
 
 -- CONCERT_SCORE
-INSERT INTO concert_score (concert_id, score_id)
-VALUES (1, 1),
-       (1, 2),
-       (2, 2),
-       (2, 3),
-       (3, 4);
+INSERT INTO concert_score (concert_id, score_id, sequence_number)
+VALUES (1, 1, 1),
+       (1, 2, 2),
+       (2, 2, 1),
+       (2, 3, 2),
+       (3, 4, null);
 
 -- set ID counter to the amount of already inserted rows
 SELECT SETVAL('concert_score_id_seq', (SELECT COUNT(1) FROM concert_score));
