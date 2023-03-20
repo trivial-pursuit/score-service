@@ -7,10 +7,11 @@ services:
       - "5432:5432"
     volumes:
       - db-data-score:/var/lib/postgresql/data-score
+      - ./postgres:/docker-entrypoint-initdb.d
     environment:
-      - POSTGRES_DB=score
+      - POSTGRES_MULTIPLE_DATABASES=score,keycloak
       - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=pass
+      - POSTGRES_PASSWORD=admin
     networks:
       - club-network
 

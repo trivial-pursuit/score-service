@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0
+    container_name: keycloak
+    ports:
+      - "8090:8080"
+      - "8443:8443"
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import
+      - ./keycloak/cert/:/opt/keycloak/conf/cert
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://db-score:5432/keycloak
+      - KC_DB_USERNAME=admin
+      - KC_DB_PASSWORD=admin
+      - KC_HTTPS_KEY_STORE_FILE=/opt/keycloak/conf/cert/keycloak.local.p12
+      - KC_HTTPS_KEY_STORE_PASSWORD=password
+    command:
+      - start-dev --import-realm
+    networks:
+      - club-network
+
+networks:
+  club-network:
+    name: club-net

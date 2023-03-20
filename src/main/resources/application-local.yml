@@ -2,6 +2,6 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/score
     username: admin
-    password: pass
+    password: admin
   flyway:
     locations: classpath:/db/migration/structure,classpath:/db/migration/sample
