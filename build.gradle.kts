@@ -66,6 +66,9 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.flywaydb:flyway-core")
 
+	// API documentation
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+
 	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")

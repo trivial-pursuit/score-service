@@ -5,3 +5,10 @@ spring:
     password: pass
   flyway:
     locations: classpath:/db/migration/structure,classpath:/db/migration/sample
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: unused
+      client-secret: unused
+      token-url: http://unused

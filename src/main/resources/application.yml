@@ -20,3 +20,9 @@ management:
   info:
     java:
       enabled: true
+
+springdoc:
+  swagger-ui:
+    try-it-out-enabled: true
+    operations-sorter: alpha
+    tags-sorter: alpha
