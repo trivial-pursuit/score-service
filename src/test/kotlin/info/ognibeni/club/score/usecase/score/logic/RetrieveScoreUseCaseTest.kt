@@ -2,6 +2,7 @@ package info.ognibeni.club.score.usecase.score.logic
 
 import info.ognibeni.club.score.usecase.score.Fixtures.exampleScore
 import info.ognibeni.club.score.usecase.score.domain.ScoreNumber
+import info.ognibeni.club.score.usecase.score.exception.ScoreNotFoundException
 import info.ognibeni.club.score.usecase.score.persistence.ScoreRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -60,7 +61,7 @@ class RetrieveScoreUseCaseTest {
 	fun `retrieving a non-existing score fails`() {
 		every { scoreRepository.getByScoreNumber(any()) } throws EmptyResultDataAccessException(1)
 
-		assertThrows<EmptyResultDataAccessException> {
+		assertThrows<ScoreNotFoundException> {
 			sut.getScore(ScoreNumber(1))
 		}
 

@@ -6,17 +6,20 @@ import info.ognibeni.club.score.usecase.score.Fixtures.exampleScore
 import info.ognibeni.club.score.usecase.score.api.model.toApi
 import info.ognibeni.club.score.usecase.score.domain.Score
 import info.ognibeni.club.score.usecase.score.domain.ScoreNumber
+import info.ognibeni.club.score.usecase.score.exception.ScoreNotFoundException
 import info.ognibeni.club.score.usecase.score.logic.RetrieveScoreUseCase
 import io.mockk.every
 import io.mockk.verify
+import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ScoreController::class)
@@ -58,7 +61,7 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 
 		every { retrieveScoreUseCase.getScore(any()) } returns exampleScore
 
-		mockMvc.performGetScore(1)
+		mockMvc.performGetScore(exampleScore.scoreNumber)
 				.andExpectResult(objectMapper, expectedApiScores)
 
 		verify(exactly = 1) { retrieveScoreUseCase.getScore(ScoreNumber(1)) }
@@ -66,20 +69,21 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 
 	@Test
 	fun `retrieving non-existing score fails`() {
-		every { retrieveScoreUseCase.getScore(any()) } throws EmptyResultDataAccessException(1)
+		val scoreNumber = ScoreNumber(1)
+		every { retrieveScoreUseCase.getScore(any()) } throws ScoreNotFoundException(scoreNumber)
 
-		mockMvc.performGetScore(1)
-				.andExpectError()
+		mockMvc.performGetScore(scoreNumber)
+				.andExpectError("SCORE_NOT_FOUND", scoreNumber.value.toString())
 
-		verify(exactly = 1) { retrieveScoreUseCase.getScore(ScoreNumber(1)) }
+		verify(exactly = 1) { retrieveScoreUseCase.getScore(scoreNumber) }
 	}
 }
 
 fun MockMvc.performGetAllScores(): ResultActions =
 		this.perform(get("/scores"))
 
-fun MockMvc.performGetScore(scoreNumber: Int): ResultActions =
-	this.perform(get("/scores/$scoreNumber"))
+fun MockMvc.performGetScore(scoreNumber: ScoreNumber): ResultActions =
+	this.perform(get("/scores/${scoreNumber.value}"))
 
 fun ResultActions.andExpectResult(objectMapper: ObjectMapper, expectedResult: Any): ResultActions {
 	this
@@ -89,9 +93,12 @@ fun ResultActions.andExpectResult(objectMapper: ObjectMapper, expectedResult: An
 	return this
 }
 
-fun ResultActions.andExpectError(): ResultActions {
+fun ResultActions.andExpectError(problemType: String, problemDetailFragment: String): ResultActions {
 	this
-			.andExpect(status().isInternalServerError)
+			.andExpect(status().isNotFound)
+			.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+			.andExpect(jsonPath("type").value("problem:$problemType"))
+			.andExpect(jsonPath("detail").value(containsString(problemDetailFragment)))
 
 	return this
 }
