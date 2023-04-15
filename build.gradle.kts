@@ -1,15 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.0.4"
+	id("org.springframework.boot") version "3.0.5"
 	id("io.spring.dependency-management") version "1.1.0"
 //	id("org.graalvm.buildtools.native") version "0.9.20"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
 	id("com.google.cloud.tools.jib") version "3.3.1"
 
-	kotlin("jvm") version "1.8.10"
-	kotlin("plugin.spring") version "1.8.10"
-	kotlin("plugin.jpa") version "1.8.10"
+	kotlin("jvm") version "1.8.20"
+	kotlin("plugin.spring") version "1.8.20"
+	kotlin("plugin.jpa") version "1.8.20"
 
 	idea
 }
@@ -67,13 +67,13 @@ dependencies {
 	implementation("org.flywaydb:flyway-core")
 
 	// API documentation
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 
 	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-	testImplementation("io.mockk:mockk:1.13.4")
+	testImplementation("io.mockk:mockk:1.13.5")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
 
 	// Integration testing
