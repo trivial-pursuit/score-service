@@ -1,9 +1,7 @@
 package info.ognibeni.club.score.it.actuator
 
 import info.ognibeni.club.score.it.TestContainerConfiguration
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,9 +36,9 @@ class ActuatorEndpointsIT(@Autowired val restTemplate: TestRestTemplate) : TestC
 	fun `specific Actuator endpoints are enabled`(endpoint: ActuatorEndpoint.Enabled) {
 		val responseEntity = restTemplate.getForEntity<String>(endpoint.url)
 
-		val errorMessage = "Endpoint ${endpoint.url} is not accessible!"
-		assertThat(errorMessage, responseEntity.statusCode, `is`(HttpStatus.OK))
-		assertThat(errorMessage, responseEntity.body, `is`(notNullValue()))
+		val errorMessage = "Endpoint ${endpoint.url} is not accessible but should be!"
+		assertThat(responseEntity.statusCode).withFailMessage(errorMessage).isEqualTo(HttpStatus.OK)
+		assertThat(responseEntity.body).withFailMessage(errorMessage).isNotEmpty
 	}
 
 	@ParameterizedTest
@@ -49,6 +47,6 @@ class ActuatorEndpointsIT(@Autowired val restTemplate: TestRestTemplate) : TestC
 		val responseEntity = restTemplate.getForEntity<String>(endpoint.url)
 
 		val errorMessage = "Endpoint ${endpoint.url} is accessible, but should be disabled!"
-		assertThat(errorMessage, responseEntity.statusCode, `is`(HttpStatus.NOT_FOUND))
+		assertThat(responseEntity.statusCode).withFailMessage(errorMessage).isEqualTo(HttpStatus.NOT_FOUND)
 	}
 }

@@ -1,9 +1,6 @@
 package info.ognibeni.club.score.it
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.Matchers.startsWith
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,11 +19,11 @@ class ScoreServiceApplicationStartupIT(@Autowired val restTemplate: TestRestTemp
 	fun `application starts up successfully`() {
 		val responseEntity = restTemplate.getForEntity<String>("/actuator/health")
 
-		assertThat(responseEntity.statusCode, `is`(HttpStatus.OK))
-		assertThat(responseEntity.body, `is`(notNullValue()))
+		assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
+		assertThat(responseEntity.body).isNotEmpty
 
 		val health = responseEntity.body ?: throw AssertionError("Response body must not be null")
 
-		assertThat(health, startsWith("{\"status\":\"UP\""))
+		assertThat(health).startsWith("""{"status":"UP"""")
 	}
 }
