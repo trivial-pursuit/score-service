@@ -1,4 +1,10 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://unused
+#          jwk-set-uri: http://localhost:${wiremock.server.port:0}/auth/realms/score/protocol/openid-connect/certs
   datasource:
     # url is configured in `TestContainerConfiguration`
     username: admin
@@ -12,3 +18,7 @@ springdoc:
       client-id: unused
       client-secret: unused
       token-url: http://unused
+
+cors:
+  allowed-origins:
+    - "http://unused"

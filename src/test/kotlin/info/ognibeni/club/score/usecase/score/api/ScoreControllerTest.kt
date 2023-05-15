@@ -2,27 +2,32 @@ package info.ognibeni.club.score.usecase.score.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import info.ognibeni.club.score.ScoreServiceTestConfiguration
+import info.ognibeni.club.score.andExpectAuthenticationError
+import info.ognibeni.club.score.andExpectNotFoundError
+import info.ognibeni.club.score.andExpectResult
 import info.ognibeni.club.score.usecase.score.Fixtures.exampleScore
 import info.ognibeni.club.score.usecase.score.api.model.toApi
 import info.ognibeni.club.score.usecase.score.domain.Score
 import info.ognibeni.club.score.usecase.score.domain.ScoreNumber
 import info.ognibeni.club.score.usecase.score.exception.ScoreNotFoundException
 import info.ognibeni.club.score.usecase.score.logic.RetrieveScoreUseCase
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.verify
-import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithAnonymousUser
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(ScoreController::class)
+@ContextConfiguration(classes = [ScoreServiceTestConfiguration::class])
+@WithMockUser
 class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
                           @Autowired private val objectMapper: ObjectMapper) {
 
@@ -73,32 +78,28 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveScoreUseCase.getScore(any()) } throws ScoreNotFoundException(scoreNumber)
 
 		mockMvc.performGetScore(scoreNumber)
-				.andExpectError("SCORE_NOT_FOUND", scoreNumber.value.toString())
+				.andExpectNotFoundError("SCORE_NOT_FOUND", scoreNumber.value.toString())
 
 		verify(exactly = 1) { retrieveScoreUseCase.getScore(scoreNumber) }
 	}
+
+	@WithAnonymousUser
+	@Test
+	fun `retrieving scores without authentication fails`() {
+
+		mockMvc.performGetAllScores()
+			.andExpectAuthenticationError()
+
+		mockMvc.performGetScore(ScoreNumber(1))
+			.andExpectAuthenticationError()
+
+		verify { retrieveScoreUseCase wasNot Called }
+	}
 }
+
 
 fun MockMvc.performGetAllScores(): ResultActions =
 		this.perform(get("/scores"))
 
 fun MockMvc.performGetScore(scoreNumber: ScoreNumber): ResultActions =
 	this.perform(get("/scores/${scoreNumber.value}"))
-
-fun ResultActions.andExpectResult(objectMapper: ObjectMapper, expectedResult: Any): ResultActions {
-	this
-			.andExpect(status().isOk)
-			.andExpect(content().json(objectMapper.writeValueAsString(expectedResult)))
-
-	return this
-}
-
-fun ResultActions.andExpectError(problemType: String, problemDetailFragment: String): ResultActions {
-	this
-			.andExpect(status().isNotFound)
-			.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
-			.andExpect(jsonPath("type").value("problem:$problemType"))
-			.andExpect(jsonPath("detail").value(containsString(problemDetailFragment)))
-
-	return this
-}
