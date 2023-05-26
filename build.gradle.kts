@@ -86,6 +86,9 @@ dependencies {
 
 	// Integration testing
 	itImplementation("org.springframework.boot:spring-boot-starter-test")
+	itImplementation("org.springframework.boot:spring-boot-starter-webflux")
+	itImplementation("org.springframework.security:spring-security-test")
+	itImplementation("org.springframework.security:spring-security-oauth2-client")
 	itImplementation("org.testcontainers:junit-jupiter")
 	itImplementation("org.testcontainers:postgresql")
 }
@@ -108,6 +111,8 @@ val integrationTest = task<Test>("integrationTest") {
 
 	// set the configuration profile for the integration tests, enabling application-integrationTest.yml
 	systemProperty("spring.profiles.active", "integrationTest")
+	systemProperty("javax.net.ssl.trustStore", "local/certs/cacerts")
+	systemProperty("javax.net.ssl.trustStorePassword", "changeit")
 
 	testClassesDirs = sourceSets["it"].output.classesDirs
 	classpath = sourceSets["it"].runtimeClasspath

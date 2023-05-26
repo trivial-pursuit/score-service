@@ -3,14 +3,41 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://unused
+          issuer-uri: https://localhost:8443/realms/score
+#          jwk-set-uri: http://unused
 #          jwk-set-uri: http://localhost:${wiremock.server.port:0}/auth/realms/score/protocol/openid-connect/certs
+      client:
+        registration:
+          scoretest:
+            authorization-grant-type: "client_credentials"
+            client-id: "swagger-ui"
+            client-secret: "secret"
+        provider:
+          scoretest:
+            issuer-uri: https://localhost:8443/realms/score
   datasource:
     # url is configured in `TestContainerConfiguration`
     username: admin
     password: pass
   flyway:
     locations: classpath:/db/migration/structure,classpath:/db/migration/sample
+
+
+#server:
+#  port: 443
+#  ssl:
+#    enabled: false
+#    key-store: classpath:cacerts
+#    key-store-type: PKCS12
+#    protocol: TLS
+#    enabled-protocols: TLSv1.2   # Best practice - see https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices
+#    key-password: changeit
+#    key-store-password: changeit
+#    trust-store: classpath:cacerts
+#    trust-store-password: changeit
+#    trust-store-type: JKS
+#    key-store-type: JKS
+#    trust-store-type: PKCS12
 
 springdoc:
   swagger-ui:
@@ -22,3 +49,7 @@ springdoc:
 cors:
   allowed-origins:
     - "http://unused"
+
+logging:
+  level:
+    org.springframework: DEBUG
