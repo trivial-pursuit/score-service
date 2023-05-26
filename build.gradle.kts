@@ -50,13 +50,20 @@ dependencyManagement {
 
 dependencies {
 	// Spring Boot
-	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+	// Security
+	// - Authentication via OAuth 2.0 and JWT bearer tokens
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.security:spring-security-oauth2-resource-server")
+	implementation("org.springframework.security:spring-security-oauth2-jose")
+
 
 	// Kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -71,6 +78,7 @@ dependencies {
 
 	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 	testImplementation("io.mockk:mockk:1.13.5")
@@ -78,6 +86,9 @@ dependencies {
 
 	// Integration testing
 	itImplementation("org.springframework.boot:spring-boot-starter-test")
+	itImplementation("org.springframework.boot:spring-boot-starter-webflux")
+	itImplementation("org.springframework.security:spring-security-test")
+	itImplementation("org.springframework.security:spring-security-oauth2-client")
 	itImplementation("org.testcontainers:junit-jupiter")
 	itImplementation("org.testcontainers:postgresql")
 }
@@ -100,6 +111,8 @@ val integrationTest = task<Test>("integrationTest") {
 
 	// set the configuration profile for the integration tests, enabling application-integrationTest.yml
 	systemProperty("spring.profiles.active", "integrationTest")
+	systemProperty("javax.net.ssl.trustStore", "local/certs/cacerts")
+	systemProperty("javax.net.ssl.trustStorePassword", "changeit")
 
 	testClassesDirs = sourceSets["it"].output.classesDirs
 	classpath = sourceSets["it"].runtimeClasspath

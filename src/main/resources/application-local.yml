@@ -5,6 +5,11 @@ spring:
     password: admin
   flyway:
     locations: classpath:/db/migration/structure,classpath:/db/migration/sample
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://localhost:8443/realms/score
 
 springdoc:
   swagger-ui:
@@ -12,3 +17,7 @@ springdoc:
       client-id: swagger-ui
       client-secret: secret
       token-url: https://localhost:8443/realms/score/protocol/openid-connect/token
+
+cors:
+  allowed-origins:
+    - "http://localhost:8080"
