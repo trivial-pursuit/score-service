@@ -89,8 +89,10 @@ dependencies {
 
 	// Integration testing
 	itImplementation("org.springframework.boot:spring-boot-starter-test")
+	itImplementation("org.springframework.security:spring-security-test")
 	itImplementation("org.testcontainers:junit-jupiter")
 	itImplementation("org.testcontainers:postgresql")
+	itImplementation("com.tngtech.keycloakmock:mock:0.16.0")
 }
 
 tasks.withType<KotlinCompile> {

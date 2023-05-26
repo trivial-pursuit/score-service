@@ -3,8 +3,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://unused
-#          jwk-set-uri: http://localhost:${wiremock.server.port:0}/auth/realms/score/protocol/openid-connect/certs
+          issuer-uri: http://localhost:4321/realms/score
   datasource:
     # url is configured in `TestContainerConfiguration`
     username: admin

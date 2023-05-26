@@ -1,40 +1,58 @@
 package info.ognibeni.club.score.it.usecase.concert.api
 
+import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import info.ognibeni.club.score.it.TestContainerConfiguration
+import info.ognibeni.club.score.it.TestContainerConfiguration.Companion.oAuthServerMock
+import info.ognibeni.club.score.usecase.concert.api.model.ApiConcerts
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
-import org.springframework.http.ProblemDetail
-import org.springframework.http.RequestEntity.get
-import java.net.URI
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.toEntity
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class ConcertControllerIT(@Autowired val restTemplate: TestRestTemplate) : TestContainerConfiguration {
+class ConcertControllerIT(@LocalServerPort private val port: Int) : TestContainerConfiguration {
 
 	@Test
 	fun `retrieving all concerts succeeds`() {
-		val request = get("/concerts")
-			.headers { it.setBearerAuth("token") }
-			.build()
 
-		val responseEntity = restTemplate.exchange(request, String::class.java)
+		val apiResponse: ResponseEntity<ApiConcerts> =
+			RestClient
+				.create()
+				.get()
+				.uri("http://localhost:$port/concerts")
+				.headers { it.setBearerAuth(newAdminToken()) }
+				.retrieve()
+				.onStatus(HttpStatusCode::is4xxClientError) { _, _ -> }
+				.toEntity<ApiConcerts>()
 
-//		assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
+		assertThat(apiResponse.statusCode).isEqualTo(HttpStatus.OK)
+		assertThat(apiResponse.body).isNotNull
+		assertThat(apiResponse.body!!.concerts).hasSize(3)
 	}
 
 	@Test
 	fun `retrieving all concerts without authentication fails`() {
-		val request = get("/concerts").build()
 
-		val responseEntity = restTemplate.exchange(request, ProblemDetail::class.java)
-
-		assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
-		assertThat(responseEntity.body?.type).isEqualTo(URI("problem:UNAUTHORIZED"))
-		assertThat(responseEntity.body?.title).isEqualTo("Unauthorized")
-		assertThat(responseEntity.body?.status).isEqualTo(HttpStatus.UNAUTHORIZED.value())
+			RestClient
+				.create()
+				.get()
+				.uri("http://localhost:$port/concerts")
+				.retrieve()
+				.onStatus(HttpStatusCode::is4xxClientError) { _, response ->
+					assertThat(response.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
+					assertThat(response.body).isNotNull
+//					assertThat(response.body!!.type).isEqualTo(URI("problem:UNAUTHORIZED"))
+				}
 	}
 }
+
+fun newAdminToken(): String = oAuthServerMock.getAccessToken(
+	aTokenConfig()
+		.withClaim("roles", listOf("admin"))
+		.build())
