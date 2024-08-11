@@ -1,22 +1,22 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.0.5"
-	id("io.spring.dependency-management") version "1.1.0"
-//	id("org.graalvm.buildtools.native") version "0.9.20"
-	id("com.gorylenko.gradle-git-properties") version "2.4.1"
-	id("com.google.cloud.tools.jib") version "3.3.1"
+	id("org.springframework.boot") version "3.4.2"
+	id("io.spring.dependency-management") version "1.1.7"
+//	id("org.graalvm.buildtools.native") version "0.10.5"
+	id("com.gorylenko.gradle-git-properties") version "2.4.2"
+	id("com.google.cloud.tools.jib") version "3.4.4"
 
-	kotlin("jvm") version "1.8.20"
-	kotlin("plugin.spring") version "1.8.20"
-	kotlin("plugin.jpa") version "1.8.20"
+	kotlin("jvm") version "2.1.10"
+	kotlin("plugin.spring") version "2.1.10"
+	kotlin("plugin.jpa") version "2.1.10"
 
 	idea
 }
 
 group = "info.ognibeni.club.score"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
 	compileOnly {
@@ -44,7 +44,7 @@ configurations["itRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 dependencyManagement {
 	imports {
-		mavenBom("org.testcontainers:testcontainers-bom:1.17.6")
+		mavenBom("org.testcontainers:testcontainers-bom:1.20.4")
 	}
 }
 
@@ -65,15 +65,16 @@ dependencies {
 	// Database
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
 
 	// API documentation
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 
 	// Unit testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-	testImplementation("io.mockk:mockk:1.13.5")
+	testImplementation("io.mockk:mockk:1.13.16")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
 
 	// Integration testing
@@ -83,9 +84,16 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
+	compilerOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
+		jvmTarget = JvmTarget.JVM_21
+	}
+}
+
+plugins.withType<JavaPlugin> {
+	extensions.configure<JavaPluginExtension> {
+		sourceCompatibility = JavaVersion.VERSION_21
+		targetCompatibility = JavaVersion.VERSION_21
 	}
 }
 
