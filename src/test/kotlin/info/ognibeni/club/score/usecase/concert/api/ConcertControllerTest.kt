@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import info.ognibeni.club.score.usecase.concert.Fixtures.exampleConcert
 import info.ognibeni.club.score.usecase.concert.api.model.ApiConcert
+import info.ognibeni.club.score.usecase.concert.api.model.ApiConcerts
 import info.ognibeni.club.score.usecase.concert.api.model.toApi
 import info.ognibeni.club.score.usecase.concert.domain.Concert
 import info.ognibeni.club.score.usecase.concert.logic.RetrieveConcertUseCase
@@ -30,7 +31,9 @@ class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
 				exampleConcert("Example Concert 1"),
 				exampleConcert("Example Concert 2")
 		)
-		val expectedApiConcerts = exampleConcert.map { it.toApi() }
+		val expectedApiConcerts = exampleConcert
+			.map { it.toApi() }
+			.let { ApiConcerts(it) }
 
 		every { retrieveConcertUseCase.getAllConcerts() } returns exampleConcert
 
@@ -41,7 +44,9 @@ class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
 	@Test
 	fun `retrieving empty concert list succeeds`() {
 		val exampleConcerts = emptyList<Concert>()
-		val expectedApiConcerts = exampleConcerts.map { it.toApi() }
+		val expectedApiConcerts = exampleConcerts
+			.map { it.toApi() }
+			.let { ApiConcerts(it) }
 
 		every { retrieveConcertUseCase.getAllConcerts() } returns exampleConcerts
 

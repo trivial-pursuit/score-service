@@ -1,6 +1,6 @@
 package info.ognibeni.club.score.usecase.concert.api
 
-import info.ognibeni.club.score.usecase.concert.api.model.ApiConcert
+import info.ognibeni.club.score.usecase.concert.api.model.ApiConcerts
 import info.ognibeni.club.score.usecase.concert.api.model.toApi
 import info.ognibeni.club.score.usecase.concert.logic.RetrieveConcertUseCase
 import io.swagger.v3.oas.annotations.Operation
@@ -27,10 +27,11 @@ class ConcertController(private val retrieveConcertUseCase: RetrieveConcertUseCa
 		ApiResponse(
 			responseCode = HttpURLConnection.HTTP_OK.toString(),
 			description = "Concerts successfully retrieved",
-			content = [Content(schema = Schema(implementation = List::class), mediaType = APPLICATION_JSON_VALUE)])])
+			content = [Content(schema = Schema(implementation = ApiConcerts::class), mediaType = APPLICATION_JSON_VALUE)])])
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	// TODO: @ResponseBody  // necessary for MockMvc?
-	fun getAllConcerts(): List<ApiConcert> =
-		retrieveConcertUseCase.getAllConcerts().map { it.toApi() }
+	fun getAllConcerts(): ApiConcerts =
+		retrieveConcertUseCase.getAllConcerts()
+			.map { it.toApi() }
+			.let { ApiConcerts(it) }
 }
