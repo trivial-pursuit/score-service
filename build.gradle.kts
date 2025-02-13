@@ -28,6 +28,8 @@ repositories {
 	mavenCentral()
 }
 
+jib.to.image = "ognibeni/score-service"
+
 // See https://docs.gradle.org/current/userguide/java_testing.html#sec:configuring_java_integration_tests
 sourceSets {
 	create("it") {
