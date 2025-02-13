@@ -1,4 +1,9 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:4321/realms/score
   datasource:
     # url is configured in `TestContainerConfiguration`
     username: admin
@@ -12,3 +17,7 @@ springdoc:
       client-id: unused
       client-secret: unused
       token-url: http://unused
+
+cors:
+  allowed-origins:
+    - "http://unused"

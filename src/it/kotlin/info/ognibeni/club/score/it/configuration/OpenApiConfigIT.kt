@@ -18,7 +18,7 @@ import org.springframework.http.MediaType
 class OpenApiConfigIT(@Autowired val restTemplate: TestRestTemplate) : TestContainerConfiguration {
 
 	@Test
-	fun ui_loads_successfully() {
+	fun `ui loads successfully`() {
 
 		val responseEntity = restTemplate.getForEntity<String>("/swagger-ui/index.html")
 
@@ -28,7 +28,7 @@ class OpenApiConfigIT(@Autowired val restTemplate: TestRestTemplate) : TestConta
 	}
 
 	@Test
-	fun api_docs_load_successfully() {
+	fun `api docs load successfully`() {
 
 		var responseEntity = restTemplate.getForEntity<String>("/v3/api-docs")
 
@@ -52,7 +52,7 @@ class OpenApiConfigIT(@Autowired val restTemplate: TestRestTemplate) : TestConta
 	}
 
 	@Test
-	fun resources_for_ui_load_successfully() {
+	fun `resources for ui load successfully`() {
 
 		var responseEntity = restTemplate.getForEntity<String>("/v3/api-docs/swagger-config")
 

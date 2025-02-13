@@ -4,6 +4,7 @@
     <module name="score-service.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="info.ognibeni.club.score.ScoreServiceApplication" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <option name="VM_PARAMETERS" value="-Djavax.net.ssl.trustStore=local/certs/cacerts -Djavax.net.ssl.trustStorePassword=changeit" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

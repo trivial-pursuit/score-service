@@ -1,5 +1,7 @@
 package info.ognibeni.club.score.it
 
+import com.tngtech.keycloakmock.api.KeycloakMock
+import com.tngtech.keycloakmock.api.ServerConfig.aServerConfig
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -34,6 +36,15 @@ interface TestContainerConfiguration {
 			waitingFor(Wait.forListeningPort())
 			start()
 		}
+
+		val oAuthServerMock =
+			KeycloakMock(
+				aServerConfig()
+					.withPort(4321)
+					.withNoContextPath()
+					.withDefaultRealm("score")
+					.build()
+			).also { it.start() }
 
 		/**
 		 * The Docker container will expose a dynamic JDBC URL for PostgreSQL. Here we make sure the JDBC
