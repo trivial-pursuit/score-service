@@ -6,17 +6,17 @@ usage() {
 
 start_env() {
 	echo "Starting local environment ..."
-	docker-compose -f docker-compose.yml -f docker-compose_keycloak.yml up --build
+	docker compose -f docker-compose.yml -f docker-compose_keycloak.yml up --build
 }
 
 start_env_keycloak_dev() {
 	echo "Starting local environment ..."
-	docker-compose -f docker-compose.yml -f docker-compose_keycloak-dev.yml up
+	docker compose -f docker-compose.yml -f docker-compose_keycloak-dev.yml up
 }
 
 stop_env() {
 	echo "Stopping local environment ..."
-	docker-compose -f docker-compose.yml -f docker-compose_keycloak.yml down
+	docker compose -f docker-compose.yml -f docker-compose_keycloak.yml down
 }
 
 ###

@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db-score:
-    image: postgres:15
+    image: postgres:17
     container_name: db-score
     ports:
       - "5432:5432"

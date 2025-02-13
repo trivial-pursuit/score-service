@@ -63,6 +63,6 @@ class OpenApiConfigIT(@Autowired val restTemplate: TestRestTemplate) : TestConta
 		responseEntity = restTemplate.getForEntity("/swagger-ui/swagger-ui-bundle.js")
 
 		assertThat(responseEntity.statusCode).isEqualTo(HttpStatus.OK)
-		assertThat(responseEntity.headers.contentType).isEqualTo(MediaType("application", "javascript"))
+		assertThat(responseEntity.headers.contentType).isEqualTo(MediaType("text", "javascript"))
 	}
 }

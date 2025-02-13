@@ -21,7 +21,7 @@ import org.testcontainers.containers.wait.strategy.Wait
 interface TestContainerConfiguration {
 	companion object {
 
-		private const val POSTGRESQL_VERSION = "15"
+		private const val POSTGRESQL_VERSION = "17"
 
 		/**
 		 * Note that this field is defined within the companion object so that it will only start once
