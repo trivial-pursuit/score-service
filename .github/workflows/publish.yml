@@ -1,9 +1,10 @@
 name: CI publish Docker image
 
 on:
+  # `workflow_run` is only executed on the `main` branch
   workflow_run:
     workflows:
-      - "CI build and test"
+      - "CI test and build"
     types:
       - completed
 

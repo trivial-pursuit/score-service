@@ -2,15 +2,15 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.4.2"
+	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
-//	id("org.graalvm.buildtools.native") version "0.10.5"
-	id("com.gorylenko.gradle-git-properties") version "2.4.2"
-	id("com.google.cloud.tools.jib") version "3.4.4"
+//	id("org.graalvm.buildtools.native") version "1.1.13"
+	id("com.gorylenko.gradle-git-properties") version "4.0.1"
+	id("com.google.cloud.tools.jib") version "3.5.4"
 
-	kotlin("jvm") version "2.1.10"
-	kotlin("plugin.spring") version "2.1.10"
-	kotlin("plugin.jpa") version "2.1.10"
+	kotlin("jvm") version "2.4.20"
+	kotlin("plugin.spring") version "2.4.20"
+	kotlin("plugin.jpa") version "2.4.20"
 
 	idea
 }
@@ -46,7 +46,7 @@ configurations["itRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 dependencyManagement {
 	imports {
-		mavenBom("org.testcontainers:testcontainers-bom:1.20.4")
+		mavenBom("org.testcontainers:testcontainers-bom:2.0.5")
 	}
 }
 
@@ -55,7 +55,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -66,36 +67,36 @@ dependencies {
 
 	// Database
 	runtimeOnly("org.postgresql:postgresql")
-	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 
 	// API documentation
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 
 	// Unit testing
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-	testImplementation("io.mockk:mockk:1.13.16")
-	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("io.mockk:mockk:1.14.11")
+	testImplementation("com.ninja-squad:springmockk:5.0.1")
 
 	// Integration testing
-	itImplementation("org.springframework.boot:spring-boot-starter-test")
-	itImplementation("org.testcontainers:junit-jupiter")
-	itImplementation("org.testcontainers:postgresql")
+	itImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	itImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
+	itImplementation("org.testcontainers:testcontainers-junit-jupiter")
+	itImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 tasks.withType<KotlinCompile> {
 	compilerOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = JvmTarget.JVM_21
+		jvmTarget = JvmTarget.JVM_25
 	}
 }
 
 plugins.withType<JavaPlugin> {
 	extensions.configure<JavaPluginExtension> {
-		sourceCompatibility = JavaVersion.VERSION_21
-		targetCompatibility = JavaVersion.VERSION_21
+		sourceCompatibility = JavaVersion.VERSION_25
+		targetCompatibility = JavaVersion.VERSION_25
 	}
 }
 
