@@ -2,8 +2,8 @@ package info.ognibeni.club.score.it
 
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.postgresql.PostgreSQLContainer
 
 /**
  * Interface that should be used for all integration tests needing a test container.
@@ -27,7 +27,7 @@ interface TestContainerConfiguration {
 		 * Note that this field is defined within the companion object so that it will only start once
 		 * for all tests in the current JVM, as opposed to once for every test class (via @BeforeAll).
 		 */
-		private val postgreSqlContainer = PostgreSQLContainer<Nothing>("postgres:$POSTGRESQL_VERSION").apply {
+		private val postgreSqlContainer = PostgreSQLContainer("postgres:$POSTGRESQL_VERSION").apply {
 			withDatabaseName("score-test")
 			withUsername("admin")
 			withPassword("pass")

@@ -1,6 +1,5 @@
 package info.ognibeni.club.score.usecase.concert.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import info.ognibeni.club.score.usecase.concert.Fixtures.exampleConcert
 import info.ognibeni.club.score.usecase.concert.api.model.ApiConcert
@@ -10,16 +9,18 @@ import info.ognibeni.club.score.usecase.concert.logic.RetrieveConcertUseCase
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
 
 @WebMvcTest(ConcertController::class)
 class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
-                          @Autowired private val objectMapper: ObjectMapper) {
+                          @Autowired private val jsonMapper: JsonMapper
+) {
 
 	@MockkBean
 	lateinit var retrieveConcertUseCase: RetrieveConcertUseCase
@@ -35,7 +36,7 @@ class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveConcertUseCase.getAllConcerts() } returns exampleConcert
 
 		mockMvc.performGetAllConcerts()
-				.andExpectConcerts(objectMapper, expectedApiConcerts)
+				.andExpectConcerts(jsonMapper, expectedApiConcerts)
 	}
 
 	@Test
@@ -46,7 +47,7 @@ class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveConcertUseCase.getAllConcerts() } returns exampleConcerts
 
 		mockMvc.performGetAllConcerts()
-				.andExpectConcerts(objectMapper, expectedApiConcerts)
+				.andExpectConcerts(jsonMapper, expectedApiConcerts)
 	}
 }
 
@@ -54,10 +55,10 @@ class ConcertControllerTest(@Autowired private val mockMvc: MockMvc,
 fun MockMvc.performGetAllConcerts(): ResultActions =
 		this.perform(get("/concerts"))
 
-fun ResultActions.andExpectConcerts(objectMapper: ObjectMapper, expectedApiConcerts: List<ApiConcert>): ResultActions {
+fun ResultActions.andExpectConcerts(jsonMapper: JsonMapper, expectedApiConcerts: List<ApiConcert>): ResultActions {
 	this
 			.andExpect(status().isOk)
-			.andExpect(content().json(objectMapper.writeValueAsString(expectedApiConcerts)))
+			.andExpect(content().json(jsonMapper.writeValueAsString(expectedApiConcerts)))
 
 	return this
 }

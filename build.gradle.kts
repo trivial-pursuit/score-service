@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.5.16"
+	id("org.springframework.boot") version "4.1.1"
 	id("io.spring.dependency-management") version "1.1.7"
 //	id("org.graalvm.buildtools.native") version "1.1.13"
 	id("com.gorylenko.gradle-git-properties") version "4.0.1"
@@ -55,7 +55,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -66,23 +67,23 @@ dependencies {
 
 	// Database
 	runtimeOnly("org.postgresql:postgresql")
-	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 
 	// API documentation
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.9.1")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 
 	// Unit testing
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 	testImplementation("io.mockk:mockk:1.14.11")
-	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("com.ninja-squad:springmockk:5.0.1")
 
 	// Integration testing
-	itImplementation("org.springframework.boot:spring-boot-starter-test")
-	itImplementation("org.testcontainers:junit-jupiter")
-	itImplementation("org.testcontainers:postgresql")
+	itImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	itImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
+	itImplementation("org.testcontainers:testcontainers-junit-jupiter")
+	itImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 tasks.withType<KotlinCompile> {

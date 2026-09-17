@@ -4,10 +4,11 @@ import info.ognibeni.club.score.it.TestContainerConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
+import org.springframework.boot.resttestclient.getForEntity
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType
  * Checks if the API documentation has been generated and exposed properly.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 class OpenApiConfigIT(@Autowired val restTemplate: TestRestTemplate) : TestContainerConfiguration {
 
 	@Test

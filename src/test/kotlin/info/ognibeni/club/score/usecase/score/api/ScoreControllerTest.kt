@@ -1,6 +1,5 @@
 package info.ognibeni.club.score.usecase.score.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import info.ognibeni.club.score.usecase.score.Fixtures.exampleScore
 import info.ognibeni.club.score.usecase.score.api.model.toApi
@@ -13,7 +12,7 @@ import io.mockk.verify
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -21,10 +20,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tools.jackson.databind.json.JsonMapper
 
 @WebMvcTest(ScoreController::class)
 class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
-                          @Autowired private val objectMapper: ObjectMapper) {
+                          @Autowired private val jsonMapper: JsonMapper
+) {
 
 	@MockkBean
 	lateinit var retrieveScoreUseCase: RetrieveScoreUseCase
@@ -40,7 +41,7 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveScoreUseCase.getAllScores() } returns exampleScores
 
 		mockMvc.performGetAllScores()
-				.andExpectResult(objectMapper, expectedApiScores)
+				.andExpectResult(jsonMapper, expectedApiScores)
 	}
 
 	@Test
@@ -51,7 +52,7 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveScoreUseCase.getAllScores() } returns exampleScores
 
 		mockMvc.performGetAllScores()
-				.andExpectResult(objectMapper, expectedApiScores)
+				.andExpectResult(jsonMapper, expectedApiScores)
 	}
 
 	@Test
@@ -62,7 +63,7 @@ class ScoreControllerTest(@Autowired private val mockMvc: MockMvc,
 		every { retrieveScoreUseCase.getScore(any()) } returns exampleScore
 
 		mockMvc.performGetScore(exampleScore.scoreNumber)
-				.andExpectResult(objectMapper, expectedApiScores)
+				.andExpectResult(jsonMapper, expectedApiScores)
 
 		verify(exactly = 1) { retrieveScoreUseCase.getScore(ScoreNumber(1)) }
 	}
@@ -85,10 +86,10 @@ fun MockMvc.performGetAllScores(): ResultActions =
 fun MockMvc.performGetScore(scoreNumber: ScoreNumber): ResultActions =
 	this.perform(get("/scores/${scoreNumber.value}"))
 
-fun ResultActions.andExpectResult(objectMapper: ObjectMapper, expectedResult: Any): ResultActions {
+fun ResultActions.andExpectResult(jsonMapper: JsonMapper, expectedResult: Any): ResultActions {
 	this
 			.andExpect(status().isOk)
-			.andExpect(content().json(objectMapper.writeValueAsString(expectedResult)))
+			.andExpect(content().json(jsonMapper.writeValueAsString(expectedResult)))
 
 	return this
 }
