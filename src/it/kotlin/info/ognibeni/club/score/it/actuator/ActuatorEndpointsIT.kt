@@ -5,12 +5,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.resttestclient.TestRestTemplate
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate
-import org.springframework.boot.resttestclient.getForEntity
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.http.HttpStatus
+import org.springframework.test.web.servlet.client.RestTestClient
 
 class ActuatorEndpoint {
 	enum class Enabled(val url: String) {
@@ -30,25 +28,23 @@ class ActuatorEndpoint {
  * Checks if some specific Spring Boot Actuator endpoints are enabled or disabled.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@AutoConfigureTestRestTemplate
-class ActuatorEndpointsIT(@Autowired val restTemplate: TestRestTemplate) : TestContainerConfiguration {
+@AutoConfigureRestTestClient
+class ActuatorEndpointsIT(@Autowired val restTestClient: RestTestClient) : TestContainerConfiguration {
 
 	@ParameterizedTest
 	@EnumSource
 	fun `specific Actuator endpoints are enabled`(endpoint: ActuatorEndpoint.Enabled) {
-		val responseEntity = restTemplate.getForEntity<String>(endpoint.url)
-
-		val errorMessage = "Endpoint ${endpoint.url} is not accessible but should be!"
-		assertThat(responseEntity.statusCode).withFailMessage(errorMessage).isEqualTo(HttpStatus.OK)
-		assertThat(responseEntity.body).withFailMessage(errorMessage).isNotEmpty
+		restTestClient.get().uri(endpoint.url)
+			.exchange()
+			.expectStatus().isOk
+			.expectBody().consumeWith { assertThat(it.responseBody).isNotEmpty() }
 	}
 
 	@ParameterizedTest
 	@EnumSource
 	fun `specific Actuator endpoints are disabled`(endpoint: ActuatorEndpoint.Disabled) {
-		val responseEntity = restTemplate.getForEntity<String>(endpoint.url)
-
-		val errorMessage = "Endpoint ${endpoint.url} is accessible, but should be disabled!"
-		assertThat(responseEntity.statusCode).withFailMessage(errorMessage).isEqualTo(HttpStatus.NOT_FOUND)
+		restTestClient.get().uri(endpoint.url)
+			.exchange()
+			.expectStatus().isNotFound
 	}
 }
